@@ -1,0 +1,4 @@
+pyvisa==1.13.0
+pyvisa-py==0.6.3; sys_platform != 'win32'
+pyusb==1.2.1; sys_platform != 'win32'
+pyserial==3.5; sys_platform != 'win32'
