@@ -46,3 +46,18 @@ def parse_power_script(
         normalized_power_trace.append((step, period, voltage, current))
 
     return normalized_power_trace
+
+def trace_to_plot(power_trace):
+    x = []
+    y = []
+    last_period = None
+
+    for step, period, voltage, current in power_trace:
+        if x:
+            x.append(x[-1] + last_period)
+        else:
+            x.append(0)
+        last_period = period
+        y.append(voltage * current * 1000)
+
+    return x, y
