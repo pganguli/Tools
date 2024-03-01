@@ -19,10 +19,15 @@ def main():
     parser.add_argument('--debug', action='store_true', default=False)
     args = parser.parse_args()
 
+    logging_kwargs = {
+        'format': '%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s',
+        'datefmt': '%Y-%m-%d %H:%M:%S',
+    }
     if args.debug:
-        logging.basicConfig(level=logging.DEBUG)
+        logging_kwargs['level'] = logging.DEBUG
     else:
-        logging.basicConfig(level=logging.INFO)
+        logging_kwargs['level'] = logging.INFO
+    logging.basicConfig(**logging_kwargs)
 
     normalized_power_trace = parse_power_script(args.script, args.normalized_average_current, args.normalized_max_current)
 
