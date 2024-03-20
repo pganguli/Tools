@@ -12,28 +12,31 @@ class Device:
     BAUD_RATE: Optional[int] = None
     IDENTIFIERS: List[str]
 
-    def __init__(self):
-        resource_name = None
-
+    def __init__(self, resource_name: Optional[str] = None):
         rm = pyvisa.ResourceManager()
-        resources = rm.list_resources()
-        print(resources)
 
-        for identifier in self.IDENTIFIERS:
-            try:
-                resource_name = next(
-                    resource for resource in resources if identifier in resource)
-                break
-            except StopIteration:
-                continue
-        if not resource_name:
-            raise DeviceNotFound
+        if resource_name is None:
+            resource_name = self._find_resource(rm)
 
         self.inst = rm.open_resource(resource_name)
 
         if self.BAUD_RATE:
             self.inst.baud_rate = self.BAUD_RATE
         print(self._query('*IDN?'))
+
+    def _find_resource(self, rm):
+        resources = rm.list_resources()
+        print(resources)
+
+        for identifier in self.IDENTIFIERS:
+            try:
+                return next(
+                    resource for resource in resources if identifier in resource)
+                break
+            except StopIteration:
+                continue
+
+        raise DeviceNotFound
 
     def _write_command(self, command: str):
         logger.debug('Sending command %s', command)

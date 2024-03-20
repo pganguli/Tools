@@ -17,6 +17,7 @@ def main():
     parser.add_argument('--voltage', type=float, default=0)
     parser.add_argument('--normalized_average_current', type=float, default=0)
     parser.add_argument('--normalized_max_current', type=float, default=0)
+    parser.add_argument('--ip', type=str, default='')
     parser.add_argument('--debug', action='store_true', default=False)
     args = parser.parse_args()
 
@@ -32,10 +33,15 @@ def main():
 
     normalized_power_trace = parse_power_script(args.script, args.voltage, args.normalized_average_current, args.normalized_max_current)
 
+    resource_name = None
+    if args.ip:
+        # https://pyvisa.readthedocs.io/en/1.8/names.html
+        resource_name = f'TCPIP::{args.ip}::INSTR'
+
     try:
-        device = Keithley2280S()
+        device = Keithley2280S(resource_name)
     except DeviceNotFound:
-        device = BK9171B()
+        device = BK9171B(resource_name)
 
     try:
         device.output_on()
