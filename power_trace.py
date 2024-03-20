@@ -6,6 +6,7 @@ logger = logging.getLogger('power_trace')
 
 def parse_power_script(
     script: str,
+    override_voltage: float = 0,
     normalized_average_current: Optional[float] = 0,
     normalized_max_current: Optional[float] = 0,
 ):
@@ -33,6 +34,8 @@ def parse_power_script(
         if period.endswith('sec'):
             period = float(period[:-len('sec')])
         voltage = float(voltage)
+        if override_voltage:
+            voltage = override_voltage
         current = float(current)
 
         orig_current = current
