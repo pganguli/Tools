@@ -52,7 +52,9 @@ Backends:
 # Preparation for Windows
 
 1. Download NI-VISA package manager from https://www.ni.com/zh-tw/support/downloads/drivers/download.ni-visa.html
-2. Install NI-VISA using the package manager. Note that only NI-VISA is necessary, and all extra components can be unchecked.
+2. Install NI-VISA using the package manager. Note that only NI-VISA is necessary. All additional items can be deselected.
+
+After installing NI-VISA, the USB device, which represents the power supply, in Windows Device Manager should get a driver.
 
 After installation:
 ```
