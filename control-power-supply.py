@@ -70,6 +70,8 @@ def run_power_trace(device, normalized_power_trace, csv_log_writer):
                 time.sleep(period)
                 logger.info('Elapsed time: %f', time.time() - start_time)
     except KeyboardInterrupt:
+        pass
+    finally:
         device.output_off()
 
 if __name__ == '__main__':
