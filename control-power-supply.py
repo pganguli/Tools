@@ -1,4 +1,6 @@
 import argparse
+import csv
+import datetime
 import logging
 import time
 
@@ -18,6 +20,7 @@ def main():
     parser.add_argument('--normalized_average_current', type=float, default=0)
     parser.add_argument('--normalized_max_current', type=float, default=0)
     parser.add_argument('--ip', type=str, default='')
+    parser.add_argument('--power-trace-log-csv', required=True)
     parser.add_argument('--debug', action='store_true', default=False)
     args = parser.parse_args()
 
@@ -43,6 +46,12 @@ def main():
     except DeviceNotFound:
         device = BK9171B(resource_name)
 
+    with open(args.power_trace_log_csv, 'w', newline='', encoding='utf-8') as log_csv_file:
+        writer = csv.writer(log_csv_file)
+        writer.writerow(['Timestamp', 'Voltage', 'Current'])
+        run_power_trace(device, normalized_power_trace, writer)
+
+def run_power_trace(device, normalized_power_trace, csv_log_writer):
     try:
         device.output_on()
 
@@ -53,6 +62,11 @@ def main():
                 device.set_voltage(voltage)
                 device.set_current(current)
                 logger.info('Set voltage=%f, current=%f', voltage, current)
+
+                device_voltage, device_current = device.get_voltage_and_current()
+                now = datetime.datetime.now()
+                csv_log_writer.writerow([now, device_voltage, device_current])
+
                 time.sleep(period)
                 logger.info('Elapsed time: %f', time.time() - start_time)
     except KeyboardInterrupt:
