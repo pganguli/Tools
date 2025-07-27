@@ -89,14 +89,14 @@ def run_power_trace(device, normalized_power_trace, csv_log_writer):
             for step, period, voltage, current in normalized_power_trace:
                 device.set_voltage(voltage)
                 device.set_current(current)
-                logger.info('Set voltage=%f, current=%f', voltage, current)
+                logger.debug('Set voltage=%f, current=%f', voltage, current)
 
                 device_voltage, device_current = device.get_voltage_and_current()
                 now = datetime.datetime.now()
                 csv_log_writer.writerow([now, device_voltage, device_current])
 
                 time.sleep(period)
-                logger.info('Elapsed time: %f', time.time() - start_time)
+                logger.debug('Elapsed time: %f', time.time() - start_time)
                 if stop_flag.is_set():
                     raise StopCommand()
     except (KeyboardInterrupt, StopCommand):
