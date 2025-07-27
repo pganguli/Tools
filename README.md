@@ -53,6 +53,7 @@ Backends:
 
 1. Download NI-VISA package manager from https://www.ni.com/zh-tw/support/downloads/drivers/download.ni-visa.html
 2. Install NI-VISA using the package manager. Note that only NI-VISA is necessary. All additional items can be deselected.
+3. For BK9171B, download and install CP2102 driver from https://www.silabs.com/software-and-tools/usb-to-uart-bridge-vcp-drivers?tab=downloads
 
 After installing NI-VISA, the USB device, which represents the power supply, in Windows Device Manager should get a driver.
 
