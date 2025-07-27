@@ -2,6 +2,7 @@ import logging
 from typing import List, Optional
 
 import pyvisa
+from serial.tools.list_ports import comports
 
 logger = logging.getLogger('power_supply')
 
@@ -36,6 +37,14 @@ class Device:
             except StopIteration:
                 continue
 
+        serial_ports_info = comports()
+        for port_info in serial_ports_info:
+            if not port_info.vid or not port_info.pid:
+                # Not a USB device, ignoring
+                continue
+            if f'0x{port_info.vid:04X}::0x{port_info.pid:04X}' in self.IDENTIFIERS:
+                return port_info.name
+
         raise DeviceNotFound
 
     def _write_command(self, command: str):
@@ -66,7 +75,9 @@ class Device:
 class BK9171B(Device):
     # Also uses SCPI? See "4.2 Remote Commands" of 9170B_9180B_Series_manual.pdf
     BAUD_RATE = 57600  # value from BK Precision's software
-    IDENTIFIERS = ['ttyUSB', 'COM3']
+    IDENTIFIERS = [
+        '0x10C4::0xEA60',
+    ]
 
     def output_on(self):
         self._write_command('OUT 1')
