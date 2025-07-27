@@ -2,6 +2,8 @@ import argparse
 import csv
 import datetime
 import logging
+import socket
+import threading
 import time
 
 from power_supply import (
@@ -12,6 +14,28 @@ from power_supply import (
 from power_trace import parse_power_script
 
 logger = logging.getLogger('control-power-supply')
+
+stop_flag = threading.Event()
+
+def server_thread():
+    host = '127.0.0.1'
+    port = 65432
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind((host, port))
+        s.listen()
+        print(f"Listening for commands on {host}:{port}")
+
+        conn, addr = s.accept()
+        with conn:
+            print(f"Connected by {addr}")
+            data = conn.recv(1024)
+            if data.decode() == "STOP":
+                print("Received 'STOP' command. Setting stop flag.")
+                stop_flag.set()
+
+class StopCommand(BaseException):
+    pass
 
 def main():
     parser = argparse.ArgumentParser()
@@ -57,6 +81,10 @@ def run_power_trace(device, normalized_power_trace, csv_log_writer):
 
         start_time = time.time()
 
+        # Start the server thread
+        server = threading.Thread(target=server_thread)
+        server.start()
+
         while True:  # repeat the script infinitely
             for step, period, voltage, current in normalized_power_trace:
                 device.set_voltage(voltage)
@@ -69,7 +97,9 @@ def run_power_trace(device, normalized_power_trace, csv_log_writer):
 
                 time.sleep(period)
                 logger.info('Elapsed time: %f', time.time() - start_time)
-    except KeyboardInterrupt:
+                if stop_flag.is_set():
+                    raise StopCommand()
+    except (KeyboardInterrupt, StopCommand):
         pass
     finally:
         device.output_off()
