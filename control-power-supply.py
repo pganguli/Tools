@@ -28,10 +28,9 @@ def server_thread():
 
         conn, addr = s.accept()
         with conn:
-            print(f"Connected by {addr}")
             data = conn.recv(1024)
             if data.decode() == "STOP":
-                print("Received 'STOP' command. Setting stop flag.")
+                print("Received 'STOP' command. Shutting down the power supply.")
                 stop_flag.set()
 
 class StopCommand(BaseException):
