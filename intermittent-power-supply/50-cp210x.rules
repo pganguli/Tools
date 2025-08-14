@@ -1,0 +1,7 @@
+# CP210x
+# 1. Copy to /etc/udev/rules.d/
+# 2. Run sudo udevadm control --reload
+# 3. Re-plug the cable
+# 4. Re-login to make uaccess apply (not alwayd needed?)
+# Ref: https://superuser.com/a/989721 for uaccess tag
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", TAG+="uaccess"

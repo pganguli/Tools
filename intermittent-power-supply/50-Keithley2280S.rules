@@ -1,0 +1,3 @@
+# Keithley 2280S
+# Ref: https://superuser.com/a/989721 for uaccess tag
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="05e6", ATTRS{idProduct}=="2280", TAG+="uaccess"
