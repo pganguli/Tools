@@ -1,3 +1,13 @@
+#!/usr/bin/env python3
+"""
+Auto-detect MSP430/MSP432 UART devices and launch minicom.
+
+Scans available serial ports for known MSP430/MSP432 descriptions, presents a
+menu when multiple are found, and opens minicom at the appropriate baud rate.
+
+Usage: python tools/minicom-launcher.py
+"""
+
 import logging
 import platform
 import os
@@ -7,16 +17,20 @@ from subprocess import PIPE
 import uart_utils
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger('minicom-launcher')
+logger = logging.getLogger("minicom-launcher")
+
 
 def set_window_title(title):
-    if os.getenv('TERM') not in ('xterm-256color', 'tmux-256color'):
+    if os.getenv("TERM") not in ("xterm-256color", "tmux-256color"):
         return
-    print(f'\033]2;{title}\007')
+    print(f"\033]2;{title}\007")
+
 
 def check_minicom():
     try:
-        minicom_version_raw = subprocess.run(["minicom", "-v"], check=False, stdout=PIPE).stdout
+        minicom_version_raw = subprocess.run(
+            ["minicom", "-v"], check=False, stdout=PIPE
+        ).stdout
     except FileNotFoundError:
         print("Minicom is not installed")
         exit(1)
@@ -24,21 +38,23 @@ def check_minicom():
     minicom_version = minicom_version_raw.split()[2].decode()
     return minicom_version
 
+
 def open_minicom(device, baudrate):
     set_window_title(device)
     cmd = ["minicom", f"--device={device}", "--baudrate", f"{baudrate}"]
     if platform.system() == "Darwin":
         cmd.append("-m")
     env = os.environ.copy()
-    env['LC_MESSAGES'] = 'en_US.UTF-8'
+    env["LC_MESSAGES"] = "en_US.UTF-8"
     subprocess.run(cmd, env=env)
 
 
 def baudrate(target_dev):
-    if 'Cypress' in target_dev or 'M432' in target_dev:
+    if "Cypress" in target_dev or "M432" in target_dev:
         return 115200
     else:
         return 115200
+
 
 def run_minicom(device_list: list):
 
@@ -50,7 +66,9 @@ def run_minicom(device_list: list):
         print(f"{index}\t{device}")
 
     if len(device_list) > 1:
-        dev_num = input("Device to connect {}: ".format([n for n in range(len(device_list))]))
+        dev_num = input(
+            "Device to connect {}: ".format([n for n in range(len(device_list))])
+        )
 
         try:
             dev_num = int(dev_num)
@@ -70,6 +88,7 @@ def run_minicom(device_list: list):
         exit(1)
 
     open_minicom(target_dev, baudrate(target_dev))
+
 
 if __name__ == "__main__":
     uart_devices = uart_utils.find_uart()
