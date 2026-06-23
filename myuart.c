@@ -141,9 +141,18 @@ const EUSCI_CONFIG_PARAMS UartParams[] = {
 extern UART_HandleTypeDef huart2;
 #endif
 
+/* Riotee board routes the MSP430 debug UART over eUSCI_A1 (D1/TX = P2.5),
+ * since eUSCI_A0 / P2.0 is the C2C link to the nRF52.  Other MSP430 boards
+ * (e.g. the FR5994 LaunchPad) use eUSCI_A0 on P2.0/P2.1. */
+#if defined(__MSP430FR5962__)
+#define NODPA_UART_BASE EUSCI_A1_BASE
+#else
+#define NODPA_UART_BASE EUSCI_A0_BASE
+#endif
+
 void uart_putc(char c) {
 #ifdef __MSP430__
-  EUSCI_A_UART_transmitData(EUSCI_A0_BASE, (uint8_t)c);
+  EUSCI_A_UART_transmitData(NODPA_UART_BASE, (uint8_t)c);
 #elif defined(__MSP432__)
   MAP_UART_transmitData(EUSCI_A0_BASE, (uint8_t)c);
 #endif
@@ -278,23 +287,29 @@ void uartinit() {
     // Configure UART
     EUSCI_A_UART_initParam param = UartParams[FreqLevel - 1];
 
-    if (STATUS_FAIL == EUSCI_A_UART_init(EUSCI_A0_BASE, &param)) return;
+    if (STATUS_FAIL == EUSCI_A_UART_init(NODPA_UART_BASE, &param)) return;
 
-    EUSCI_A_UART_enable(EUSCI_A0_BASE);
+    EUSCI_A_UART_enable(NODPA_UART_BASE);
 
-    EUSCI_A_UART_clearInterrupt(EUSCI_A0_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);
+    EUSCI_A_UART_clearInterrupt(NODPA_UART_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);
 
-    // Enable USCI_A0 RX interrupt
+    // Enable USCI RX interrupt
     EUSCI_A_UART_enableInterrupt(
-        EUSCI_A0_BASE,
+        NODPA_UART_BASE,
         EUSCI_A_UART_RECEIVE_INTERRUPT);  // Enable interrupt
 
     // Enable globale interrupt
     __enable_interrupt();
 
+#if defined(__MSP430FR5962__)
+    // Riotee: UART TXD on D1/TX = P2.5 (UCA1TXD, secondary module function).
+    GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P2, GPIO_PIN5,
+                                                GPIO_SECONDARY_MODULE_FUNCTION);
+#else
     // Select UART TXD on P2.0
     GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P2, GPIO_PIN0,
                                                 GPIO_SECONDARY_MODULE_FUNCTION);
+#endif
 #elif defined(__MSP432__)
     /* Selecting P1.2 and P1.3 in UART mode */
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(
