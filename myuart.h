@@ -1,7 +1,7 @@
 // UART output API for MSP430/MSP432.
 //
-// BuadRate [sic]: the UART baud rate constant (9600 baud).  Both MSP430 and
-// MSP432 drivers use this to compute the baud-rate divisor register value.
+// BuadRate [sic]: the UART baud rate (115200).  The UartParams[] table in
+// myuart.c holds the per-clock register values computed for this rate.
 //
 // uartinit(): configure the USCI/eUSCI peripheral (baud rate, 8N1 framing)
 //   and set up the TX/RX GPIO pins in their peripheral-module function.
@@ -24,7 +24,7 @@
 // convert / convertl: integer-to-string helpers used internally by the
 //   print2uart implementations; exposed in case they are needed elsewhere.
 
-#define BuadRate 9600
+#define BuadRate 115200
 
 #ifdef __cplusplus
 extern "C" {

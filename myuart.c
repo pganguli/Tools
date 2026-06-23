@@ -1,7 +1,7 @@
 /*
  * UART driver for MSP430/MSP432/STM32.
  *
- * UartParams[]: table of eUSCI_A baud-rate register values for 9600 baud at
+ * UartParams[]: table of eUSCI_A baud-rate register values for 115200 baud at
  *   each of the 11 clock frequencies (1–48 MHz).  The table is indexed by
  *   FreqLevel - 1.  Values were computed with TI's online baud-rate calculator:
  *   http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/
@@ -53,8 +53,8 @@ typedef eUSCI_UART_Config EUSCI_CONFIG_PARAMS;
 #endif
 
 #ifdef __TOOLS_MSP__
-// The following structure will configure the EUSCI_A port to run at 9600 baud
-// from an 1~24MHz ACLK The baud rate values were calculated at:
+// Baud-rate register values for 115200 baud at each clock frequency.
+// Values calculated at:
 // http://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430BaudRateConverter/index.html
 // See also
 // https://dev.ti.com/tirex/explore/node?node=ACmvnDrzuRlhbVcxPmBGTQ__z-lQYNj__LATEST
@@ -62,51 +62,51 @@ typedef eUSCI_UART_Config EUSCI_CONFIG_PARAMS;
 const EUSCI_CONFIG_PARAMS UartParams[] = {
     {// 1MHz
      EUSCI_A_UART_CLOCKSOURCE_SMCLK,
-     6,   // clockPrescalar
-     8,   // firstModReg
-     17,  // secondModReg
-     EUSCI_A_UART_NO_PARITY, EUSCI_A_UART_LSB_FIRST, EUSCI_A_UART_ONE_STOP_BIT,
-     EUSCI_A_UART_MODE, EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION},
-    {// 2.66MHz
-     EUSCI_A_UART_CLOCKSOURCE_SMCLK,
-     17,  // clockPrescalar
-     5,   // firstModReg
-     2,   // secondModReg
-     EUSCI_A_UART_NO_PARITY, EUSCI_A_UART_LSB_FIRST, EUSCI_A_UART_ONE_STOP_BIT,
-     EUSCI_A_UART_MODE, EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION},
-    {// 3.5MHz
-     EUSCI_A_UART_CLOCKSOURCE_SMCLK,
-     22,   // clockPrescalar
-     12,   // firstModReg
-     107,  // secondModReg
-     EUSCI_A_UART_NO_PARITY, EUSCI_A_UART_LSB_FIRST, EUSCI_A_UART_ONE_STOP_BIT,
-     EUSCI_A_UART_MODE, EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION},
-    {// 4MHz
-     EUSCI_A_UART_CLOCKSOURCE_SMCLK,
-     26,   // clockPrescalar
+     8,    // clockPrescalar
      0,    // firstModReg
      214,  // secondModReg
      EUSCI_A_UART_NO_PARITY, EUSCI_A_UART_LSB_FIRST, EUSCI_A_UART_ONE_STOP_BIT,
      EUSCI_A_UART_MODE, EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION},
+    {// 2.66MHz
+     EUSCI_A_UART_CLOCKSOURCE_SMCLK,
+     1,  // clockPrescalar
+     7,  // firstModReg
+     4,  // secondModReg
+     EUSCI_A_UART_NO_PARITY, EUSCI_A_UART_LSB_FIRST, EUSCI_A_UART_ONE_STOP_BIT,
+     EUSCI_A_UART_MODE, EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION},
+    {// 3.5MHz
+     EUSCI_A_UART_CLOCKSOURCE_SMCLK,
+     1,   // clockPrescalar
+     14,  // firstModReg
+     82,  // secondModReg
+     EUSCI_A_UART_NO_PARITY, EUSCI_A_UART_LSB_FIRST, EUSCI_A_UART_ONE_STOP_BIT,
+     EUSCI_A_UART_MODE, EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION},
+    {// 4MHz
+     EUSCI_A_UART_CLOCKSOURCE_SMCLK,
+     2,    // clockPrescalar
+     2,    // firstModReg
+     187,  // secondModReg
+     EUSCI_A_UART_NO_PARITY, EUSCI_A_UART_LSB_FIRST, EUSCI_A_UART_ONE_STOP_BIT,
+     EUSCI_A_UART_MODE, EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION},
     {// 5.33MHz
      EUSCI_A_UART_CLOCKSOURCE_SMCLK,
-     34,  // clockPrescalar
-     11,  // firstModReg
-     17,  // secondModReg
+     2,   // clockPrescalar
+     14,  // firstModReg
+     68,  // secondModReg
      EUSCI_A_UART_NO_PARITY, EUSCI_A_UART_LSB_FIRST, EUSCI_A_UART_ONE_STOP_BIT,
      EUSCI_A_UART_MODE, EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION},
     {// 7MHz
      EUSCI_A_UART_CLOCKSOURCE_SMCLK,
-     45,  // clockPrescalar
-     9,   // firstModReg
-     17,  // secondModReg
+     3,    // clockPrescalar
+     12,   // firstModReg
+     221,  // secondModReg
      EUSCI_A_UART_NO_PARITY, EUSCI_A_UART_LSB_FIRST, EUSCI_A_UART_ONE_STOP_BIT,
      EUSCI_A_UART_MODE, EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION},
     {// 8MHz
      EUSCI_A_UART_CLOCKSOURCE_SMCLK,
-     52,  // clockPrescalar
-     1,   // firstModReg
-     73,  // secondModReg
+     4,   // clockPrescalar
+     5,   // firstModReg
+     85,  // secondModReg
      EUSCI_A_UART_NO_PARITY, EUSCI_A_UART_LSB_FIRST, EUSCI_A_UART_ONE_STOP_BIT,
      EUSCI_A_UART_MODE, EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION},
     {// 16MHz
@@ -118,9 +118,9 @@ const EUSCI_CONFIG_PARAMS UartParams[] = {
      EUSCI_A_UART_MODE, EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION},
     {// 12MHz
      EUSCI_A_UART_CLOCKSOURCE_SMCLK,
-     78,  // clockPrescalar
-     2,   // firstModReg
-     0,   // secondModReg
+     6,   // clockPrescalar
+     8,   // firstModReg
+     32,  // secondModReg
      EUSCI_A_UART_NO_PARITY, EUSCI_A_UART_LSB_FIRST, EUSCI_A_UART_ONE_STOP_BIT,
      EUSCI_A_UART_MODE, EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION},
     {// 24MHz (24000000 Hz)
@@ -291,7 +291,8 @@ void uartinit() {
 
     EUSCI_A_UART_enable(NODPA_UART_BASE);
 
-    EUSCI_A_UART_clearInterrupt(NODPA_UART_BASE, EUSCI_A_UART_RECEIVE_INTERRUPT);
+    EUSCI_A_UART_clearInterrupt(NODPA_UART_BASE,
+                                EUSCI_A_UART_RECEIVE_INTERRUPT);
 
     // Enable USCI RX interrupt
     EUSCI_A_UART_enableInterrupt(
